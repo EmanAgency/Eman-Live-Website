@@ -1,172 +1,134 @@
-"use strict";
-
 /* =========================================================
-   EMAN LIVE WEBSITE
-   SIMPLE WEBSITE JAVASCRIPT
-========================================================= */
+   EMAN LIVE WEBSITE — JAVASCRIPT
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* =======================================================
+     CURRENT YEAR
+     ======================================================= */
+
+  const yearElement = document.getElementById("currentYear");
+
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+  }
 
 
-/* =========================================================
-   GOOGLE PLAY BUTTON
-========================================================= */
+  /* =======================================================
+     GOOGLE PLAY BUTTON
+     ======================================================= */
 
-const playStoreButton =
-  document.getElementById("playStoreButton");
+  const googlePlayButton = document.getElementById("googlePlayButton");
 
+  if (googlePlayButton) {
 
-if (playStoreButton) {
-
-  playStoreButton.addEventListener(
-    "click",
-    function (event) {
-
-      /*
-       * The Eman Live Android app has not
-       * been published yet.
-       *
-       * When Google Play gives us the
-       * official app URL, replace the "#"
-       * in index.html with that URL.
-       */
+    googlePlayButton.addEventListener("click", function (event) {
 
       event.preventDefault();
 
       showNotice(
-        "Eman Live is coming soon to Google Play."
+        "Eman Live is coming soon to Google Play. 🚀"
       );
 
-    }
-  );
-
-}
-
-
-/* =========================================================
-   SMOOTH INTERNAL LINKS
-========================================================= */
-
-document
-  .querySelectorAll(
-    'a[href^="#"]'
-  )
-  .forEach(
-    function (link) {
-
-      link.addEventListener(
-        "click",
-        function (event) {
-
-          const targetId =
-            link.getAttribute("href");
-
-          if (
-            !targetId ||
-            targetId === "#"
-          ) {
-            return;
-          }
-
-          const target =
-            document.querySelector(
-              targetId
-            );
-
-          if (!target) {
-            return;
-          }
-
-          event.preventDefault();
-
-          target.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-        }
-      );
-
-    }
-  );
-
-
-/* =========================================================
-   HEADER SCROLL EFFECT
-========================================================= */
-
-const header =
-  document.querySelector(
-    ".site-header"
-  );
-
-
-function updateHeader() {
-
-  if (!header) return;
-
-  if (window.scrollY > 20) {
-
-    header.style.background =
-      "rgba(8, 8, 8, 0.96)";
-
-  } else {
-
-    header.style.background =
-      "rgba(8, 8, 8, 0.88)";
+    });
 
   }
 
-}
+
+  /* =======================================================
+     SMOOTH SCROLL
+     ======================================================= */
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+
+    link.addEventListener("click", function (event) {
+
+      const targetId = this.getAttribute("href");
+
+      if (!targetId || targetId === "#") {
+        return;
+      }
+
+      const target = document.querySelector(targetId);
+
+      if (target) {
+
+        event.preventDefault();
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+    });
+
+  });
 
 
-window.addEventListener(
-  "scroll",
-  updateHeader,
-  {
-    passive: true
+  /* =======================================================
+     HEADER SCROLL EFFECT
+     ======================================================= */
+
+  const header = document.getElementById("siteHeader");
+
+  function updateHeader() {
+
+    if (!header) {
+      return;
+    }
+
+    if (window.scrollY > 30) {
+
+      header.style.background =
+        "rgba(7, 7, 13, 0.92)";
+
+      header.style.boxShadow =
+        "0 10px 40px rgba(0,0,0,.25)";
+
+    } else {
+
+      header.style.background =
+        "rgba(7, 7, 13, 0.72)";
+
+      header.style.boxShadow =
+        "none";
+
+    }
+
   }
-);
+
+  window.addEventListener("scroll", updateHeader);
+
+  updateHeader();
 
 
-updateHeader();
+  /* =======================================================
+     SCROLL REVEAL
+     ======================================================= */
 
-
-/* =========================================================
-   SCROLL REVEAL
-========================================================= */
-
-const revealElements =
-  document.querySelectorAll(
-    ".feature-card, .step-card, .stat-card, .faq-item"
+  const revealElements = document.querySelectorAll(
+    ".feature-card, .step-card, .creator-card, .creator-stat, .download-card, .faq-list details"
   );
 
+  if ("IntersectionObserver" in window) {
 
-if (
-  "IntersectionObserver" in window
-) {
+    const observer = new IntersectionObserver(
+      function (entries, observerInstance) {
 
-  const observer =
-    new IntersectionObserver(
-      function (entries) {
+        entries.forEach(function (entry) {
 
-        entries.forEach(
-          function (entry) {
+          if (entry.isIntersecting) {
 
-            if (
-              entry.isIntersecting
-            ) {
+            entry.target.classList.add("revealed");
 
-              entry.target.classList.add(
-                "visible"
-              );
-
-              observer.unobserve(
-                entry.target
-              );
-
-            }
+            observerInstance.unobserve(entry.target);
 
           }
-        );
+
+        });
 
       },
       {
@@ -174,169 +136,138 @@ if (
       }
     );
 
+    revealElements.forEach(function (element) {
 
-  revealElements.forEach(
-    function (element) {
+      element.classList.add("reveal");
 
-      observer.observe(
-        element
-      );
+      observer.observe(element);
 
-    }
-  );
-
-} else {
-
-  revealElements.forEach(
-    function (element) {
-
-      element.classList.add(
-        "visible"
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   SIMPLE NOTICE
-========================================================= */
-
-function showNotice(message) {
-
-  const existing =
-    document.getElementById(
-      "emanNotice"
-    );
-
-
-  if (existing) {
-
-    existing.remove();
+    });
 
   }
 
 
-  const notice =
-    document.createElement(
-      "div"
-    );
+  /* =======================================================
+     PHONE FLOATING EFFECT
+     ======================================================= */
+
+  const phone = document.querySelector(".hero-phone-area .phone");
+
+  if (phone && window.matchMedia("(min-width: 651px)").matches) {
+
+    window.addEventListener("mousemove", function (event) {
+
+      const x =
+        (event.clientX / window.innerWidth - 0.5) * 2;
+
+      const y =
+        (event.clientY / window.innerHeight - 0.5) * 2;
+
+      const rotateY = x * 3;
+      const rotateX = y * -3;
+
+      phone.style.transform =
+        `rotate(4deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+    });
+
+  }
 
 
-  notice.id =
-    "emanNotice";
+  /* =======================================================
+     NOTICE / TOAST
+     ======================================================= */
 
+  function showNotice(message) {
 
-  notice.textContent =
-    message;
+    let notice = document.getElementById("websiteNotice");
 
+    if (!notice) {
 
-  notice.style.position =
-    "fixed";
+      notice = document.createElement("div");
 
-  notice.style.left =
-    "50%";
+      notice.id = "websiteNotice";
 
-  notice.style.bottom =
-    "25px";
+      notice.style.position = "fixed";
+      notice.style.left = "50%";
+      notice.style.bottom = "25px";
+      notice.style.transform =
+        "translateX(-50%) translateY(20px)";
 
-  notice.style.transform =
-    "translateX(-50%)";
+      notice.style.zIndex = "9999";
 
-  notice.style.zIndex =
-    "9999";
+      notice.style.padding =
+        "14px 20px";
 
-  notice.style.width =
-    "min(90%, 420px)";
+      notice.style.borderRadius =
+        "999px";
 
-  notice.style.padding =
-    "14px 18px";
+      notice.style.background =
+        "rgba(20,18,30,.95)";
 
-  notice.style.borderRadius =
-    "14px";
+      notice.style.border =
+        "1px solid rgba(255,255,255,.12)";
 
-  notice.style.background =
-    "#ffffff";
+      notice.style.color =
+        "#ffffff";
 
-  notice.style.color =
-    "#080808";
+      notice.style.fontSize =
+        "13px";
 
-  notice.style.textAlign =
-    "center";
+      notice.style.fontWeight =
+        "700";
 
-  notice.style.fontSize =
-    "13px";
+      notice.style.boxShadow =
+        "0 15px 50px rgba(0,0,0,.45)";
 
-  notice.style.fontWeight =
-    "750";
+      notice.style.backdropFilter =
+        "blur(15px)";
 
-  notice.style.boxShadow =
-    "0 15px 40px rgba(0,0,0,.45)";
+      notice.style.webkitBackdropFilter =
+        "blur(15px)";
 
-
-  document.body.appendChild(
-    notice
-  );
-
-
-  setTimeout(
-    function () {
-
-      notice.style.opacity =
-        "0";
+      notice.style.opacity = "0";
 
       notice.style.transition =
-        "opacity .3s ease";
+        "opacity .3s ease, transform .3s ease";
 
+      document.body.appendChild(notice);
 
-      setTimeout(
-        function () {
+    }
 
-          notice.remove();
+    notice.textContent = message;
 
-        },
-        300
-      );
+    requestAnimationFrame(function () {
 
-    },
-    2600
-  );
+      notice.style.opacity = "1";
 
-}
+      notice.style.transform =
+        "translateX(-50%) translateY(0)";
 
+    });
 
-/* =========================================================
-   YEAR
-========================================================= */
+    clearTimeout(window.emanNoticeTimer);
 
-const yearElements =
-  document.querySelectorAll(
-    ".copyright"
-  );
+    window.emanNoticeTimer = setTimeout(function () {
 
+      notice.style.opacity = "0";
 
-yearElements.forEach(
-  function (element) {
+      notice.style.transform =
+        "translateX(-50%) translateY(20px)";
 
-    element.textContent =
-      "© " +
-      new Date().getFullYear() +
-      " Eman Live. All rights reserved.";
+    }, 3500);
 
   }
-);
 
 
-/* =========================================================
-   PAGE READY
-========================================================= */
+  /* =======================================================
+     WEBSITE READY
+     ======================================================= */
 
-document.body.classList.add(
-  "website-ready"
-);
+  document.body.classList.add("website-ready");
 
-console.log(
-  "Eman Live website loaded successfully."
-);
+  console.log(
+    "👑 Eman Live Website loaded successfully."
+  );
+
+});
